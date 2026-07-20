@@ -12,6 +12,7 @@ import android.view.View
 import android.widget.LinearLayout
 import android.widget.ScrollView
 import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.component1
 import androidx.activity.result.component2
 import androidx.activity.result.contract.ActivityResultContracts
@@ -47,6 +48,22 @@ import kotlin.properties.Delegates
 abstract class ProfileSettingsActivity<T : AbstractBean>(
     @LayoutRes resId: Int = R.layout.layout_config_settings,
 ) : ThemedActivity(resId), OnPreferenceDataStoreChangeListener {
+
+    val onBackPressedCallback = object : OnBackPressedCallback(enabled = false) {
+        override fun handleOnBackPressed() {
+            MaterialAlertDialogBuilder(this@ProfileSettingsActivity)
+                .setTitle(R.string.unsaved_changes_prompt)
+                .setPositiveButton(android.R.string.ok) { _, _ ->
+                    runOnDefaultDispatcher {
+                        saveAndExit()
+                    }
+                }
+                .setNegativeButton(android.R.string.cancel) { _, _ ->
+                    finish()
+                }
+                .show()
+        }
+    }
 
     class UnsavedChangesDialogFragment : AlertDialogFragment<Empty, Empty>() {
         override fun AlertDialog.Builder.prepare(listener: DialogInterface.OnClickListener) {
@@ -92,6 +109,7 @@ abstract class ProfileSettingsActivity<T : AbstractBean>(
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        onBackPressedDispatcher.addCallback(this, onBackPressedCallback)
         setSupportActionBar(findViewById(R.id.toolbar))
         supportActionBar?.apply {
             setTitle(R.string.profile_config)

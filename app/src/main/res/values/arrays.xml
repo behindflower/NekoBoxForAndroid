@@ -373,11 +373,9 @@
     </string-array>
 
     <string-array name="balancer_strategy_entry">
-        <item>@string/random</item>
         <item>@string/leastPing</item>
     </string-array>
     <string-array name="balancer_strategy_value">
-        <item />
         <item>leastPing</item>
     </string-array>
 

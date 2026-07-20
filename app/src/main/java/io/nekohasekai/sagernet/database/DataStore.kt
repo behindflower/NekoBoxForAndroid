@@ -19,6 +19,7 @@ import io.nekohasekai.sagernet.ktx.parsePort
 import io.nekohasekai.sagernet.ktx.string
 import io.nekohasekai.sagernet.ktx.stringToInt
 import io.nekohasekai.sagernet.ktx.stringToIntIfExists
+import io.nekohasekai.sagernet.ktx.stringToLong
 import moe.matsuri.nb4a.TempDatabase
 
 object DataStore : OnPreferenceDataStoreChangeListener {
@@ -151,6 +152,7 @@ object DataStore : OnPreferenceDataStoreChangeListener {
     var bypass by configurationStore.boolean(Key.BYPASS_MODE) { true }
     var individual by configurationStore.string(Key.INDIVIDUAL)
     var showDirectSpeed by configurationStore.boolean(Key.SHOW_DIRECT_SPEED) { true }
+    var useIECUnit by configurationStore.boolean(Key.USE_IEC_UNIT)
 
     val persistAcrossReboot by configurationStore.boolean(Key.PERSIST_ACROSS_REBOOT) { false }
 
@@ -252,6 +254,16 @@ object DataStore : OnPreferenceDataStoreChangeListener {
     var subscriptionAutoUpdateDelay by profileCacheStore.stringToInt(Key.SUBSCRIPTION_AUTO_UPDATE_DELAY) { 360 }
 
     var rulesFirstCreate by profileCacheStore.boolean("rulesFirstCreate")
+
+    var balancerType by profileCacheStore.stringToInt(Key.BALANCER_TYPE)
+    var balancerGroup by profileCacheStore.stringToLong(Key.BALANCER_GROUP)
+    var balancerStrategy by profileCacheStore.string(Key.BALANCER_STRATEGY)
+    var balancerProbeUrl by profileCacheStore.string(Key.PROBE_URL)
+    var balancerProbeInterval by profileCacheStore.stringToInt(Key.PROBE_INTERVAL) { 300 }
+    var balancerNameFilter by profileCacheStore.string(Key.BALANCER_NAME_FILTER)
+    var balancerNameFilter1 by profileCacheStore.string(Key.BALANCER_NAME_FILTER1)
+    var balancerUseLandingProxy by profileCacheStore.boolean(Key.BALANCER_USE_LANDING_PROXY)
+    var balancerUseFrontProxy by profileCacheStore.boolean(Key.BALANCER_USE_FRONT_PROXY)
 
     override fun onPreferenceDataStoreChanged(store: PreferenceDataStore, key: String) {
     }

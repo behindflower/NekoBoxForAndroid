@@ -77,6 +77,7 @@ import io.nekohasekai.sagernet.ktx.snackbar
 import io.nekohasekai.sagernet.ktx.startFilesForResult
 import io.nekohasekai.sagernet.ktx.tryToShow
 import io.nekohasekai.sagernet.plugin.PluginManager
+import io.nekohasekai.sagernet.ui.profile.BalancerSettingsActivity
 import io.nekohasekai.sagernet.ui.profile.ChainSettingsActivity
 import io.nekohasekai.sagernet.ui.profile.HttpSettingsActivity
 import io.nekohasekai.sagernet.ui.profile.HysteriaSettingsActivity
@@ -443,6 +444,10 @@ class ConfigurationFragment @JvmOverloads constructor(
 
             R.id.action_new_chain -> {
                 startActivity(Intent(requireActivity(), ChainSettingsActivity::class.java))
+            }
+
+            R.id.action_new_balancer -> {
+                startActivity(Intent(requireActivity(), BalancerSettingsActivity::class.java))
             }
 
             R.id.action_update_subscription -> {
