@@ -288,6 +288,11 @@
     <string name="random">随机</string>
     <string name="api_port">API 端口</string>
     <string name="probe_interval">负载均衡观测间隔</string>
+    <string name="probe_url">探测 URL</string>
+    <string name="regular_expression_filter">正则表达式排除过滤器</string>
+    <string name="regular_expression_filter1">正则表达式包含过滤器</string>
+    <string name="balancer_use_landing_proxy">使用分组落地代理</string>
+    <string name="balancer_use_front_proxy">使用分组前置代理</string>
     <string name="standard">标准</string>
     <string name="unavailable">不可用</string>
     <string name="always_show_address">始终显示地址</string>

@@ -334,9 +334,14 @@
     <string name="enable_log_sum">For debugging purposes</string>
     <string name="list">List</string>
     <string name="random">Random</string>
-    <string name="leastPing" translatable="false">Ping</string>
+    <string name="leastPing" translatable="false">URLTest</string>
     <string name="api_port">API Port</string>
     <string name="probe_interval">Balancer observation interval</string>
+    <string name="probe_url">Probe URL</string>
+    <string name="regular_expression_filter">Regular expression filter</string>
+    <string name="regular_expression_filter1">Regular expression include filter</string>
+    <string name="balancer_use_landing_proxy">Use group landing proxy</string>
+    <string name="balancer_use_front_proxy">Use group front proxy</string>
     <string name="standard">Standard</string>
     <string name="v2rayn" translatable="false">V2RayN</string>
     <string name="available" translatable="false">%dms</string>

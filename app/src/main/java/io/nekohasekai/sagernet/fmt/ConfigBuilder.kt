@@ -11,6 +11,7 @@ import io.nekohasekai.sagernet.database.SagerDatabase
 import io.nekohasekai.sagernet.fmt.ConfigBuildResult.IndexEntity
 import io.nekohasekai.sagernet.fmt.hysteria.HysteriaBean
 import io.nekohasekai.sagernet.fmt.hysteria.buildSingBoxOutboundHysteriaBean
+import io.nekohasekai.sagernet.fmt.internal.BalancerBean
 import io.nekohasekai.sagernet.fmt.internal.ChainBean
 import io.nekohasekai.sagernet.fmt.shadowsocks.ShadowsocksBean
 import io.nekohasekai.sagernet.fmt.shadowsocks.buildSingBoxOutboundShadowsocksBean
@@ -136,6 +137,21 @@ fun buildConfig(
                 beanList.addAll(item.resolveChainInternal())
             }
             return beanList.asReversed()
+        }
+        if (bean is BalancerBean) {
+            val beans = if (bean.type == BalancerBean.TYPE_LIST) {
+                SagerDatabase.proxyDao.getEntities(bean.proxies)
+            } else {
+                SagerDatabase.proxyDao.getByGroup(bean.groupId)
+                    .filter { if (bean.nameFilter.isEmpty()) true else !Regex(bean.nameFilter).containsMatchIn(it.requireBean().name) }
+                    .filter { if (bean.nameFilter1.isEmpty()) true else Regex(bean.nameFilter1).containsMatchIn(it.requireBean().name) }
+            }
+            val beanList = ArrayList<ProxyEntity>()
+            for (item in beans) {
+                if (item.id == id) continue
+                beanList.addAll(item.resolveChainInternal())
+            }
+            return beanList
         }
         return mutableListOf(this)
     }
@@ -582,6 +598,25 @@ fun buildConfig(
                 pastEntity = proxyEntity
             }
 
+            // handle balancer for extra proxies
+            if (entity.requireBean() is BalancerBean && chainId != 0L) {
+                val balancerBean = entity.requireBean() as BalancerBean
+                val balancerTags = chainOutbounds.map { it._hack_config_map["tag"] as String }
+                val balancerTag = "balancer-$chainTagOut"
+                outbounds.add(Outbound_URLTestOptions().apply {
+                    type = "urltest"
+                    tag = balancerTag
+                    outbounds = balancerTags
+                    url = balancerBean.probeUrl.ifEmpty { DataStore.connectionTestURL }
+                    if (balancerBean.probeInterval > 0) {
+                        _hack_config_map["interval"] = "${balancerBean.probeInterval}s"
+                    }
+                    tolerance = 50
+                })
+                trafficMap[balancerTag] = chainTrafficSet.toList()
+                return balancerTag
+            }
+
             trafficMap[chainTagOut] = chainTrafficSet.toList()
             return chainTagOut
         }
@@ -598,6 +633,38 @@ fun buildConfig(
                 default_ = tagMap[proxy.id]
                 outbounds = tagMap.values.toList()
             })
+        } else if (proxy.requireBean() is BalancerBean) {
+            val balancerBean = proxy.requireBean() as BalancerBean
+            val beans = if (balancerBean.type == BalancerBean.TYPE_LIST) {
+                SagerDatabase.proxyDao.getEntities(balancerBean.proxies)
+            } else {
+                SagerDatabase.proxyDao.getByGroup(balancerBean.groupId)
+                    .filter { if (balancerBean.nameFilter.isEmpty()) true else !Regex(balancerBean.nameFilter).containsMatchIn(it.requireBean().name) }
+                    .filter { if (balancerBean.nameFilter1.isEmpty()) true else Regex(balancerBean.nameFilter1).containsMatchIn(it.requireBean().name) }
+            }
+            beans.forEach {
+                if (it.id == proxy.id) return@forEach
+                tagMap[it.id] = buildChain(it.id, it)
+            }
+            outbounds.add(0, Outbound_URLTestOptions().apply {
+                type = "urltest"
+                tag = TAG_PROXY
+                outbounds = tagMap.values.toList()
+                url = balancerBean.probeUrl.ifEmpty { DataStore.connectionTestURL }
+                if (balancerBean.probeInterval > 0) {
+                    _hack_config_map["interval"] = "${balancerBean.probeInterval}s"
+                }
+                tolerance = 50
+            })
+            // Map balancer traffic to balancer entity, children keep their own traffic
+            trafficMap[TAG_PROXY] = listOf(proxy)
+            // Also track child nodes individually for their own traffic
+            beans.filter { it.id != proxy.id }.forEach { child ->
+                val childTag = tagMap[child.id]
+                if (childTag != null) {
+                    trafficMap[childTag] = listOf(child)
+                }
+            }
         } else {
             val mainTag = buildChain(0, proxy)
             tagMap[proxy.id] = mainTag

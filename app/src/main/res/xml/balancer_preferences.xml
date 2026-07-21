@@ -29,4 +29,39 @@
         app:title="@string/menu_group"
         app:useSimpleSummaryProvider="true" />
 
+    <SwitchPreference
+        app:defaultValue="false"
+        app:icon="@drawable/ic_hardware_router"
+        app:key="balancerUseFrontProxy"
+        app:title="@string/balancer_use_front_proxy" />
+
+    <SwitchPreference
+        app:defaultValue="false"
+        app:icon="@drawable/baseline_public_24"
+        app:key="balancerUseLandingProxy"
+        app:title="@string/balancer_use_landing_proxy" />
+
+    <EditTextPreference
+        app:icon="@drawable/ic_action_delete"
+        app:key="balancerNameFilter"
+        app:title="@string/regular_expression_filter"
+        app:useSimpleSummaryProvider="true" />
+
+    <EditTextPreference
+        app:icon="@drawable/ic_baseline_manage_search_24"
+        app:key="balancerNameFilter1"
+        app:title="@string/regular_expression_filter1"
+        app:useSimpleSummaryProvider="true" />
+
+    <EditTextPreference
+        app:icon="@drawable/ic_baseline_cast_connected_24"
+        app:key="probeUrl"
+        app:title="@string/probe_url"
+        app:useSimpleSummaryProvider="true" />
+    <EditTextPreference
+        app:icon="@drawable/ic_baseline_local_bar_24"
+        app:key="probeInterval"
+        app:title="@string/probe_interval"
+        app:useSimpleSummaryProvider="true" />
+
 </PreferenceScreen>

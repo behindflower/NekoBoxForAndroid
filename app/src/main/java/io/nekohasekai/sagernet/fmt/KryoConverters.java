@@ -12,6 +12,7 @@ import java.io.ByteArrayOutputStream;
 import io.nekohasekai.sagernet.database.SubscriptionBean;
 import io.nekohasekai.sagernet.fmt.http.HttpBean;
 import io.nekohasekai.sagernet.fmt.hysteria.HysteriaBean;
+import io.nekohasekai.sagernet.fmt.internal.BalancerBean;
 import io.nekohasekai.sagernet.fmt.internal.ChainBean;
 import io.nekohasekai.sagernet.fmt.mieru.MieruBean;
 import io.nekohasekai.sagernet.fmt.naive.NaiveBean;
@@ -180,6 +181,12 @@ public class KryoConverters {
     public static NekoBean nekoDeserialize(byte[] bytes) {
         if (JavaUtil.isEmpty(bytes)) return null;
         return deserialize(new NekoBean(), bytes);
+    }
+
+    @TypeConverter
+    public static BalancerBean balancerBeanDeserialize(byte[] bytes) {
+        if (JavaUtil.isEmpty(bytes)) return null;
+        return deserialize(new BalancerBean(), bytes);
     }
 
     @TypeConverter
