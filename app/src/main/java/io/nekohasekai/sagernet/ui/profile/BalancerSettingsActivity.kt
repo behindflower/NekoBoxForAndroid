@@ -368,6 +368,8 @@ class BalancerSettingsActivity : ProfileSettingsActivity<BalancerBean>(R.layout.
                 )
             }
 
+            deleteButton.isVisible = true
+
             editButton.setOnClickListener {
                 replacing = adapterPosition
                 selectProfileForAdd.launch(Intent(
